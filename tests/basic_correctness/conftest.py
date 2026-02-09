@@ -15,7 +15,7 @@ def pytest_addoption(parser):
         "model",
         "Model to use for the test",
         type="string",
-        default="openai/gpt-oss-20b",
+        default="yalis/external/checkpoints/openai/gpt-oss-20b",
     )
     parser.addini(
         "dtype", "Data type to use for the test", type="string", default="bf16"
@@ -30,7 +30,7 @@ def pytest_addoption(parser):
         "draft_model",
         "Draft model to use for Speculative Decoding tests",
         type="string",
-        default="openai/gpt-oss-20b",
+        default="yalis/external/checkpoints/openai/gpt-oss-20b",
     )
 
 
@@ -129,7 +129,16 @@ def alpaca_dataset():
 @pytest.fixture(scope="module")
 def yalis_engine(model_id, dtype, attn_backend):
     """Create a standard Yalis LLMEngine."""
-    model_config = ModelConfig(model_name=model_id, precision=dtype.yalis)
+    # Resolve model_path: if model_id is a relative path, make it
+    # absolute relative to repo root
+    if not os.path.isabs(model_id):
+        model_path = os.path.abspath(model_id)
+    else:
+        model_path = model_id
+    model_name_for_config = os.path.basename(model_path)
+    model_config = ModelConfig(
+        model_name_for_config, model_path=model_path, precision=dtype.yalis
+    )
     inference_config = InferenceConfig(
         max_batch_size=4,
         max_length_of_generated_sequences=2048,
