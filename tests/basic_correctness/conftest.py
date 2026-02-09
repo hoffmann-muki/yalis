@@ -15,7 +15,7 @@ def pytest_addoption(parser):
         "model",
         "Model to use for the test",
         type="string",
-        default="yalis/external/checkpoints/openai/gpt-oss-20b",
+        default="openai/gpt-oss-20b",
     )
     parser.addini(
         "dtype", "Data type to use for the test", type="string", default="bf16"
@@ -30,7 +30,7 @@ def pytest_addoption(parser):
         "draft_model",
         "Draft model to use for Speculative Decoding tests",
         type="string",
-        default="yalis/external/checkpoints/openai/gpt-oss-20b",
+        default="openai/gpt-oss-20b",
     )
 
 
